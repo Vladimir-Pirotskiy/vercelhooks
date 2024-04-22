@@ -2,55 +2,65 @@ import {useEffect, useState} from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import {mnemonicToWalletKey} from "@ton/crypto";
+import {WalletContractV4} from "@ton/ton";
+import {useTonConnect} from "./hooks/custom-hooks/useTonConnect.ts";
+import { transferJettons} from "./hooks/custom-hooks/useStakingContract.ts";
+import {useTonClient} from "./hooks/useTonClient.ts";
+import {toNano} from "@ton/core";
+import {TonConnectButton} from "@tonconnect/ui-react";
 
 function App() {
   const [count, setCount] = useState(0);
+  const client = useTonClient();
+  const {
+    wallet,
+    address,
+    pureAddress,
+    sender,
+    network,
+    connected,
+    tonConnectUI} = useTonConnect();
 
 
+  const syncFunc = async () => {
+    if (client) {
+      try{
+      transferJettons(
+        client,
+        sender,
+        'kQDQtvzM_qf9e_XNpvm195ptyOBGZj5Nql5m2WWQ_9b4bu9m',
+        toNano(1),
+        true,
+      );
 
-  useEffect(()=> {
-
-    const syncFunc = async () => {
-
-      // const foo = new TonClient({
-      //   endpoint: await getHttpEndpoint({network: "testnet"}),
-      // });
-      //
-      // const mnemonic = 'average quarter switch ten genius present armed siege pigeon family woman episode celery crazy toast build rabbit hold harbor estate kingdom critic prison tooth ';
-      // const key = await mnemonicToWalletKey(mnemonic.split(" "));
-      // const wallet = WalletContractV4.create({ publicKey: key.publicKey, workchain: 0 });
-      //
-      // // print wallet address
-      // console.log(wallet.address.toString({ testOnly: true }));
-      //
-      // // print wallet workchain
-      // console.log("workchain:", wallet.address.workChain);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
 
 
-      console.log();
+    const handleClick = () => {
+      syncFunc().catch((e)=> console.log(e))
     }
 
-    syncFunc();
-  },[])
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div style={{
+        display: "flex",
+        justifyContent: 'center',
+
+      }}>
+        <TonConnectButton />
+
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <button
+      onClick={handleClick}
+      >TRANSFER_JETTONS</button>
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
