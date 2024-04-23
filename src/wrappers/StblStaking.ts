@@ -147,9 +147,7 @@ export class StblStaking implements Contract {
 		return collectionAddress;
 	}
 
-	async getJettonAddresses(
-		provider: ContractProvider,
-	): Promise<{
+	async getJettonAddresses(provider: ContractProvider): Promise<{
 		jettonAMinter: Address;
 		jettonAWallet: Address;
 		jettonBMinter: Address;

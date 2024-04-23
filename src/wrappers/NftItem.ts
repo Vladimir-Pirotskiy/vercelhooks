@@ -9,7 +9,7 @@ import {
 	contractAddress,
 } from "@ton/core";
 
-export type NftItemConfig = {};
+export type NftItemConfig = NonNullable<unknown>;
 
 export function nftItemConfigToCell(config: NftItemConfig): Cell {
 	return beginCell().endCell();

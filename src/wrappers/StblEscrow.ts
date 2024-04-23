@@ -9,7 +9,7 @@ import {
 	contractAddress,
 } from "@ton/core";
 
-export type StblEscrowConfig = {};
+export type StblEscrowConfig = NonNullable<unknown>;
 
 export function stblEscrowConfigToCell(config: StblEscrowConfig): Cell {
 	return beginCell().endCell();

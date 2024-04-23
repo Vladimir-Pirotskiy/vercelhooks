@@ -20,6 +20,7 @@ export class JettonWallet implements Contract {
 	constructor(
 		readonly address: Address,
 		readonly init?: { code: Cell; data: Cell },
+		// biome-ignore lint/suspicious/noEmptyBlockStatements: <explanation>
 	) {}
 
 	static createFromAddress(address: Address) {
