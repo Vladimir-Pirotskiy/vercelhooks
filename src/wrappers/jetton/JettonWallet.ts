@@ -6,11 +6,10 @@ import {
 	SendMode,
 	Sender,
 	beginCell,
-	contractAddress,
 	toNano,
 } from "@ton/core";
 
-export type JettonWalletConfig = {};
+export type JettonWalletConfig = NonNullable<unknown>;
 
 export function jettonWalletConfigToCell(config: JettonWalletConfig): Cell {
 	return beginCell().endCell();
