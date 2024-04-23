@@ -119,9 +119,7 @@ export class NftCollection implements Contract {
 	}
 
 	// for offcahin content!
-	async getCollectionData(
-		provider: ContractProvider,
-	): Promise<{
+	async getCollectionData(provider: ContractProvider): Promise<{
 		nextItemId: number;
 		ownerAddress: Address;
 		collectionContent: string;
