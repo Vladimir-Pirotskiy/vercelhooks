@@ -1,14 +1,16 @@
-import { Address, beginCell, toNano } from "@ton/core";
-import type { TonClient } from "@ton/ton";
-import { JettonMinter } from "../../wrappers/JettonMinter.ts";
-import { StblEscrow } from "../../wrappers/StblEscrow.ts";
-import { StblStaking } from "../../wrappers/StblStaking.ts";
-import { JettonWallet } from "../../wrappers/jetton/JettonWallet.ts";
-// kQDQtvzM_qf9e_XNpvm195ptyOBGZj5Nql5m2WWQ_9b4bu9m
+import { Address, Cell, beginCell, toNano } from "@ton/core";
+import { JettonMaster } from "@ton/ton";
+import { TonClient } from "@ton/ton";
+import { StblEscrow } from "../wrappers/StblEscrow";
+import { StblStaking } from "../wrappers/StblStaking";
+import { JettonWallet } from "../wrappers/jetton/JettonWallet";
+import { useAsyncInitialize } from "./useAsyncInitialize.ts";
+import { useTonClient } from "./useTonClient.ts";
+import { useTonConnect } from "./useTonConnect.ts";
 
 const StableMetal_Master_Address_Testnet = Address.parse(
-	"kQARKVp3AZGrdaEqIQh-LSBleBT5TzhqijPpULLXO0HriC2_",
-); // testnet
+	"kQDQtvzM_qf9e_XNpvm195ptyOBGZj5Nql5m2WWQ_9b4bu9m",
+); // mainnet
 const StableMetal_Master_Address = Address.parse(
 	"EQD5ty5IxV3HECEY1bbbdd7rNNY-ZcA-pAIGQXyyRZRED9v3",
 ); // mainnet
@@ -16,21 +18,19 @@ const StableMetal_Master_Address = Address.parse(
 export async function transferJettons(
 	// deposit
 	client: TonClient,
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	sender: any,
 	stakingContract: string,
 	jettonAmmount: bigint,
 	mainnet: boolean,
-	// StableMetal_Master
+	StableMetal_Master?: string,
 ) {
 	let master;
+
 	if (mainnet) {
-		master = await client.open(
-			JettonMinter.createFromAddress(StableMetal_Master_Address),
-		);
+		master = await client.open(JettonMaster.create(StableMetal_Master_Address));
 	} else {
 		master = client.open(
-			JettonMinter.createFromAddress(StableMetal_Master_Address_Testnet!),
+			JettonMaster.create(Address.parse(StableMetal_Master!)),
 		);
 	}
 
@@ -73,7 +73,7 @@ export async function unstake(
 
 export async function getStakerInfo(
 	// get staker info
-	client: TonClient,
+	client: TonClient | any,
 	stakerAddress: string | Address,
 	stakingContractAddress: string,
 ) {
@@ -92,4 +92,48 @@ export async function getStakerInfo(
 	const userData = await userEscrow.getStoredData();
 
 	return userData.stored_data;
+}
+
+export function useDepositTon() {
+	const contractAddress = "StableMetal_Master_Address_Testnet";
+	const client = useTonClient();
+	const { sender, address } = useTonConnect();
+
+	const nextonContract = useAsyncInitialize(async () => {
+		if (!client) return;
+		const contract = new JettonMaster(Address.parse(contractAddress));
+		return client.open(contract);
+	}, [client]);
+
+	return {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-expect-error
+		address: nextonContract?.address.toString(),
+		sendMessage: async (data, value) => {
+			if (nextonContract) {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-expect-error
+				return await nextonContract.send(
+					sender,
+					{ value: toNano(value) },
+					data,
+				);
+			} else {
+				return () => {};
+			}
+		},
+		sendValue: async (value) => {
+			console.log(nextonContract);
+			if (nextonContract) {
+				return await sender.send({
+					to: contractAddress,
+					value: toNano(value),
+				});
+			} else {
+				return (e) => {
+					console.log(e);
+				};
+			}
+		},
+	};
 }

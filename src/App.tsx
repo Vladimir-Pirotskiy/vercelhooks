@@ -1,36 +1,38 @@
 import { toNano } from "@ton/core";
-import { mnemonicToWalletKey } from "@ton/crypto";
-import { WalletContractV4 } from "@ton/ton";
+import { TonClient } from "@ton/ton";
 import { TonConnectButton } from "@tonconnect/ui-react";
-import { useEffect, useState } from "react";
-import viteLogo from "/vite.svg";
+import { useState } from "react";
 import "./App.css";
-import reactLogo from "./assets/react.svg";
-import { transferJettons } from "./hooks/custom-hooks/useStakingContract.ts";
-import { useTonConnect } from "./hooks/custom-hooks/useTonConnect.ts";
+import {
+	getStakerInfo,
+	transferJettons,
+	useDepositTon,
+} from "./hooks/useStakingContract.ts";
 import { useTonClient } from "./hooks/useTonClient.ts";
+import { useTonConnect } from "./hooks/useTonConnect.ts";
 
 function App() {
-	const [count, setCount] = useState(0);
 	const client = useTonClient();
 	const {
+		sender,
+		tonConnectUI,
 		wallet,
 		address,
 		pureAddress,
-		sender,
 		network,
 		connected,
-		tonConnectUI,
 	} = useTonConnect();
 
+	// const { sendMessage, sendValue } = useDepositTon();
+
 	const handleClick = () => {
-		if (!client) return;
 		transferJettons(
 			client,
 			sender,
 			"kQDQtvzM_qf9e_XNpvm195ptyOBGZj5Nql5m2WWQ_9b4bu9m",
 			toNano(1),
-			true,
+			false,
+			"kQARKVp3AZGrdaEqIQh-LSBleBT5TzhqijPpULLXO0HriC2_",
 		);
 	};
 

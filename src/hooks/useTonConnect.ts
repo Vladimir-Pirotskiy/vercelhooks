@@ -5,7 +5,7 @@ import {
 	useTonWallet,
 } from "@tonconnect/ui-react";
 import { useEffect, useState } from "react";
-import { useTonClient } from "../useTonClient.ts";
+import { useTonClient } from "./useTonClient";
 
 export function useTonConnect() {
 	const client = useTonClient();
