@@ -23,24 +23,15 @@ function App() {
 		tonConnectUI,
 	} = useTonConnect();
 
-	const syncFunc = async () => {
-		if (client) {
-			try {
-				transferJettons(
-					client,
-					sender,
-					"kQDQtvzM_qf9e_XNpvm195ptyOBGZj5Nql5m2WWQ_9b4bu9m",
-					toNano(1),
-					true,
-				);
-			} catch (e) {
-				console.log(e);
-			}
-		}
-	};
-
 	const handleClick = () => {
-		syncFunc().catch((e) => console.log(e));
+		if (!client) return;
+		transferJettons(
+			client,
+			sender,
+			"kQDQtvzM_qf9e_XNpvm195ptyOBGZj5Nql5m2WWQ_9b4bu9m",
+			toNano(1),
+			true,
+		);
 	};
 
 	return (
