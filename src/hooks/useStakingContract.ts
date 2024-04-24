@@ -1,6 +1,7 @@
 import { Address, Cell, beginCell, toNano } from "@ton/core";
 import { JettonMaster } from "@ton/ton";
 import { TonClient } from "@ton/ton";
+import { JettonMinter } from "../wrappers/JettonMinter.ts";
 import { StblEscrow } from "../wrappers/StblEscrow";
 import { StblStaking } from "../wrappers/StblStaking";
 import { JettonWallet } from "../wrappers/jetton/JettonWallet";
@@ -9,7 +10,7 @@ import { useTonClient } from "./useTonClient.ts";
 import { useTonConnect } from "./useTonConnect.ts";
 
 const StableMetal_Master_Address_Testnet = Address.parse(
-	"kQDQtvzM_qf9e_XNpvm195ptyOBGZj5Nql5m2WWQ_9b4bu9m",
+	"kQARKVp3AZGrdaEqIQh-LSBleBT5TzhqijPpULLXO0HriC2_",
 ); // mainnet
 const StableMetal_Master_Address = Address.parse(
 	"EQD5ty5IxV3HECEY1bbbdd7rNNY-ZcA-pAIGQXyyRZRED9v3",
@@ -22,7 +23,7 @@ export async function transferJettons(
 	stakingContract: string,
 	jettonAmmount: bigint,
 	mainnet: boolean,
-	StableMetal_Master?: string,
+	// StableMetal_Master?: string,
 ) {
 	let master;
 
@@ -30,7 +31,7 @@ export async function transferJettons(
 		master = await client.open(JettonMaster.create(StableMetal_Master_Address));
 	} else {
 		master = client.open(
-			JettonMaster.create(Address.parse(StableMetal_Master!)),
+			JettonMaster.create(StableMetal_Master_Address_Testnet),
 		);
 	}
 

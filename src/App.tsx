@@ -32,7 +32,6 @@ function App() {
 			"kQDQtvzM_qf9e_XNpvm195ptyOBGZj5Nql5m2WWQ_9b4bu9m",
 			toNano(1),
 			false,
-			"kQARKVp3AZGrdaEqIQh-LSBleBT5TzhqijPpULLXO0HriC2_",
 		);
 	};
 
