@@ -11,7 +11,7 @@ import { useTonConnect } from "./useTonConnect.ts";
 
 const StableMetal_Master_Address_Testnet = Address.parse(
 	"kQARKVp3AZGrdaEqIQh-LSBleBT5TzhqijPpULLXO0HriC2_",
-); // mainnet
+); // testnet
 const StableMetal_Master_Address = Address.parse(
 	"EQD5ty5IxV3HECEY1bbbdd7rNNY-ZcA-pAIGQXyyRZRED9v3",
 ); // mainnet
