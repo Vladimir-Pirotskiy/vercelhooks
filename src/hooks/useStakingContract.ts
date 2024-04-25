@@ -28,10 +28,12 @@ export async function transferJettons(
 	let master;
 
 	if (mainnet) {
-		master = await client.open(JettonMaster.create(StableMetal_Master_Address));
+		master = await client.open(
+			JettonMinter.createFromAddress(StableMetal_Master_Address),
+		);
 	} else {
 		master = client.open(
-			JettonMaster.create(StableMetal_Master_Address_Testnet),
+			JettonMinter.createFromAddress(StableMetal_Master_Address_Testnet),
 		);
 	}
 
