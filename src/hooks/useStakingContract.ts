@@ -1,13 +1,9 @@
-import { Address, Cell, beginCell, toNano } from "@ton/core";
-import { JettonMaster } from "@ton/ton";
+import { Address, beginCell, toNano } from "@ton/core";
 import { TonClient } from "@ton/ton";
 import { JettonMinter } from "../wrappers/JettonMinter.ts";
 import { StblEscrow } from "../wrappers/StblEscrow";
 import { StblStaking } from "../wrappers/StblStaking";
 import { JettonWallet } from "../wrappers/jetton/JettonWallet";
-import { useAsyncInitialize } from "./useAsyncInitialize.ts";
-import { useTonClient } from "./useTonClient.ts";
-import { useTonConnect } from "./useTonConnect.ts";
 
 const StableMetal_Master_Address_Testnet = Address.parse(
 	"kQARKVp3AZGrdaEqIQh-LSBleBT5TzhqijPpULLXO0HriC2_",
@@ -15,6 +11,9 @@ const StableMetal_Master_Address_Testnet = Address.parse(
 const StableMetal_Master_Address = Address.parse(
 	"EQD5ty5IxV3HECEY1bbbdd7rNNY-ZcA-pAIGQXyyRZRED9v3",
 ); // mainnet
+const MY_ADDRESS = Address.parse(
+	"0QDor1P72rZAGX2BAFQCujsZaczsxQ_kImy94thMHYzCrVPQ",
+); // testnet
 
 export async function transferJettons(
 	// deposit
@@ -23,12 +22,12 @@ export async function transferJettons(
 	stakingContract: string,
 	jettonAmmount: bigint,
 	mainnet: boolean,
-	// StableMetal_Master?: string,
+	senderAddress: Address,
 ) {
 	let master;
 
 	if (mainnet) {
-		master = await client.open(
+		master = client.open(
 			JettonMinter.createFromAddress(StableMetal_Master_Address),
 		);
 	} else {
@@ -37,7 +36,7 @@ export async function transferJettons(
 		);
 	}
 
-	const userJettonWalletAddress = await master.getWalletAddress(sender.address);
+	const userJettonWalletAddress = await master.getWalletAddress(senderAddress);
 	const jettonWallet = client.open(
 		JettonWallet.createFromAddress(
 			Address.parse(userJettonWalletAddress.toString()),
@@ -49,7 +48,7 @@ export async function transferJettons(
 		toNano("0.6"),
 		jettonAmmount,
 		Address.parse(stakingContract),
-		sender.address,
+		senderAddress,
 		beginCell().endCell(),
 		toNano("0.4"),
 		beginCell().endCell(),
@@ -95,48 +94,4 @@ export async function getStakerInfo(
 	const userData = await userEscrow.getStoredData();
 
 	return userData.stored_data;
-}
-
-export function useDepositTon() {
-	const contractAddress = "StableMetal_Master_Address_Testnet";
-	const client = useTonClient();
-	const { sender, address } = useTonConnect();
-
-	const nextonContract = useAsyncInitialize(async () => {
-		if (!client) return;
-		const contract = new JettonMaster(Address.parse(contractAddress));
-		return client.open(contract);
-	}, [client]);
-
-	return {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-expect-error
-		address: nextonContract?.address.toString(),
-		sendMessage: async (data, value) => {
-			if (nextonContract) {
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-expect-error
-				return await nextonContract.send(
-					sender,
-					{ value: toNano(value) },
-					data,
-				);
-			} else {
-				return () => {};
-			}
-		},
-		sendValue: async (value) => {
-			console.log(nextonContract);
-			if (nextonContract) {
-				return await sender.send({
-					to: contractAddress,
-					value: toNano(value),
-				});
-			} else {
-				return (e) => {
-					console.log(e);
-				};
-			}
-		},
-	};
 }

@@ -1,4 +1,4 @@
-import { beginCell, storeStateInit } from "@ton/core";
+import { Sender, SenderArguments, beginCell, storeStateInit } from "@ton/core";
 import {
 	toUserFriendlyAddress,
 	useTonConnectUI,
@@ -29,8 +29,8 @@ export function useTonConnect() {
 		tonConnectUI,
 		wallet,
 		sender: {
-			send: async (args: any) => {
-				await tonConnectUI.sendTransaction({
+			send: async (args: SenderArguments) => {
+				tonConnectUI.sendTransaction({
 					messages: [
 						{
 							address: args.to.toString(),

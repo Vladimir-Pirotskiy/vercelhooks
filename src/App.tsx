@@ -1,37 +1,24 @@
-import { toNano } from "@ton/core";
-import { TonClient } from "@ton/ton";
-import { TonConnectButton } from "@tonconnect/ui-react";
-import { useState } from "react";
+import { Address, toNano } from "@ton/core";
+import { TonConnectButton, useTonAddress } from "@tonconnect/ui-react";
 import "./App.css";
-import {
-	getStakerInfo,
-	transferJettons,
-	useDepositTon,
-} from "./hooks/useStakingContract.ts";
+import { transferJettons } from "./hooks/useStakingContract.ts";
 import { useTonClient } from "./hooks/useTonClient.ts";
 import { useTonConnect } from "./hooks/useTonConnect.ts";
 
 function App() {
 	const client = useTonClient();
-	const {
-		sender,
-		tonConnectUI,
-		wallet,
-		address,
-		pureAddress,
-		network,
-		connected,
-	} = useTonConnect();
-
-	// const { sendMessage, sendValue } = useDepositTon();
+	const { sender } = useTonConnect();
+	const userFriendlyAddress = useTonAddress();
 
 	const handleClick = () => {
+		const parsedSenderAddress = Address.parse(userFriendlyAddress);
 		transferJettons(
 			client,
 			sender,
 			"kQDQtvzM_qf9e_XNpvm195ptyOBGZj5Nql5m2WWQ_9b4bu9m",
-			toNano(1),
+			toNano(50),
 			false,
+			parsedSenderAddress,
 		);
 	};
 
