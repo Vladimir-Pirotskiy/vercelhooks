@@ -5,6 +5,9 @@ import { StblEscrow } from "../wrappers/StblEscrow";
 import { StblStaking } from "../wrappers/StblStaking";
 import { JettonWallet } from "../wrappers/jetton/JettonWallet";
 
+
+const TEST_MASTER = Address.parse('kQCAYccnmMhCv9i5PP2MrYEXJFz5u6Ni1RZhNQJrY4aN_CfX');
+
 const StableMetal_Master_Address_Testnet = Address.parse(
 	"kQARKVp3AZGrdaEqIQh-LSBleBT5TzhqijPpULLXO0HriC2_",
 ); // testnet
@@ -95,3 +98,5 @@ export async function getStakerInfo(
 
 	return userData.stored_data;
 }
+
+
